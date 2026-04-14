@@ -1,5 +1,4 @@
-from medicine import add_medicine, view_medicines, search_medicine, update_medicine
-
+from medicine import add_medicine, view_medicines, search_medicine, update_medicine, delete_medicine
 def menu():
     while True:
         print("\n==== Smart Medicine Manager ====")
@@ -7,7 +6,8 @@ def menu():
         print("2. View Medicines")
         print("3. Search Medicine")
         print("4. Update Medicine")
-        print("5. Exit")
+        print("5. Delete Medicine")   # NEW
+        print("6. Exit")
 
         choice = input("Enter your choice: ")
 
@@ -24,11 +24,13 @@ def menu():
             update_medicine()
 
         elif choice == "5":
+            delete_medicine()   # NEW
+
+        elif choice == "6":
             print("Exiting... Stay healthy! 😊")
             break
 
         else:
             print("Invalid choice. Try again.")
-
 
 menu()

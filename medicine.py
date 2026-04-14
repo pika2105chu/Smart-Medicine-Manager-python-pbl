@@ -79,7 +79,7 @@ def update_medicine():
         print("❌ No matching medicine found.\n")
         return
 
-    # Show matching medicines
+    # Show matches
     for i, med in enumerate(matches, start=1):
         print(f"\n{i}. {med['name']}")
 
@@ -102,5 +102,45 @@ def update_medicine():
 
         save_data(data)
         print("✅ Medicine updated successfully!\n")
+    else:
+        print("Invalid selection.\n")
+
+
+def delete_medicine():
+    data = load_data()
+    query = input("Enter anything to find medicine to delete: ").lower()
+
+    matches = []
+
+    for med in data:
+        combined_data = " ".join(str(value).lower() for value in med.values())
+        if query in combined_data:
+            matches.append(med)
+
+    if not matches:
+        print("❌ No matching medicine found.\n")
+        return
+
+    # Show matches
+    for i, med in enumerate(matches, start=1):
+        print(f"\n{i}. {med['name']}")
+
+    try:
+        choice = int(input("Select medicine number to delete: ")) - 1
+    except:
+        print("Invalid input.\n")
+        return
+
+    if 0 <= choice < len(matches):
+        med = matches[choice]
+
+        confirm = input(f"Are you sure you want to delete '{med['name']}'? (y/n): ").lower()
+
+        if confirm == 'y':
+            data.remove(med)
+            save_data(data)
+            print("🗑️ Medicine deleted successfully!\n")
+        else:
+            print("Deletion cancelled.\n")
     else:
         print("Invalid selection.\n")
