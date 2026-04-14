@@ -1,5 +1,6 @@
 from storage import load_data, save_data
 
+
 def add_medicine():
     data = load_data()
 
@@ -36,41 +37,70 @@ def view_medicines():
         print(f"\nMedicine {i}:")
         for key, value in med.items():
             print(f"{key.capitalize()}: {value}")
+        print("-" * 30)
 
 
 def search_medicine():
     data = load_data()
-    name = input("Enter medicine name to search: ")
+    query = input("Enter anything to search (name/reason/notes): ").lower()
+
+    if not query:
+        print("⚠️ Please enter something to search.\n")
+        return
 
     found = False
 
     for med in data:
-        if med["name"].lower() == name.lower():
+        combined_data = " ".join(str(value).lower() for value in med.values())
+
+        if query in combined_data:
             print("\nMedicine Found:")
             for key, value in med.items():
                 print(f"{key.capitalize()}: {value}")
+            print("-" * 30)
             found = True
 
     if not found:
-        print("❌ Medicine not found.\n")
+        print("❌ No matching medicine found.\n")
 
 
 def update_medicine():
     data = load_data()
-    name = input("Enter medicine name to update: ")
+    query = input("Enter anything to find medicine to update: ").lower()
+
+    matches = []
 
     for med in data:
-        if med["name"].lower() == name.lower():
-            print("Enter new details:")
+        combined_data = " ".join(str(value).lower() for value in med.values())
+        if query in combined_data:
+            matches.append(med)
 
-            med["reason"] = input("New reason: ")
-            med["dosage"] = input("New dosage: ")
-            med["duration"] = input("New duration: ")
-            med["frequency"] = input("New frequency: ")
-            med["notes"] = input("New notes: ")
+    if not matches:
+        print("❌ No matching medicine found.\n")
+        return
 
-            save_data(data)
-            print("✅ Medicine updated successfully!\n")
-            return
+    # Show matching medicines
+    for i, med in enumerate(matches, start=1):
+        print(f"\n{i}. {med['name']}")
 
-    print("❌ Medicine not found.\n")
+    try:
+        choice = int(input("Select medicine number to update: ")) - 1
+    except:
+        print("Invalid input.\n")
+        return
+
+    if 0 <= choice < len(matches):
+        med = matches[choice]
+
+        print("Enter new details:")
+
+        med["reason"] = input("New reason: ")
+        med["dosage"] = input("New dosage: ")
+        med["duration"] = input("New duration: ")
+        med["frequency"] = input("New frequency: ")
+        med["notes"] = input("New notes: ")
+
+        save_data(data)
+        print("✅ Medicine updated successfully!\n")
+    else:
+        print("Invalid selection.\n")
