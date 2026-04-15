@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Smart Medicine Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="shell" id="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <h1>Medi<br>Manager</h1>
+      <p>Personal pharmacy</p>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" onclick="showPanel('dashboard')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-item" onclick="showPanel('all')">
+        <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+        <span>All medicines</span>
+      </button>
+      <button class="nav-item" onclick="showPanel('search')">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        <span>Search</span>
+      </button>
+      <button class="nav-item" onclick="showPanel('add')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        <span>Add medicine</span>
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="count-pill"><strong id="total-count">0</strong>&nbsp;medicines stored</div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Dashboard -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="page-head">
+        <div><h2>Good day</h2><p>Here's your medicine overview</p></div>
+        <button class="btn-primary" onclick="showPanel('add')">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add medicine
+        </button>
+      </div>
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-accent" style="background:var(--mint)"></div>
+          <div class="stat-label">Total medicines</div>
+          <div class="stat-val" id="ds-total">0</div>
+          <div class="stat-sub">in your cabinet</div>
+        </div>
+        <div class="stat">
+          <div class="stat-accent" style="background:var(--lavender)"></div>
+          <div class="stat-label">Unique reasons</div>
+          <div class="stat-val" id="ds-reasons">0</div>
+          <div class="stat-sub">conditions tracked</div>
+        </div>
+        <div class="stat">
+          <div class="stat-accent" style="background:var(--gold)"></div>
+          <div class="stat-label">With notes</div>
+          <div class="stat-val" id="ds-notes">0</div>
+          <div class="stat-sub">have extra info</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span style="font-size:13px;font-weight:500;color:var(--ink2)">Recent additions</span>
+        <button style="font-size:12.5px;color:var(--mint);background:none;border:none;cursor:pointer;font-family:'Outfit',sans-serif" onclick="showPanel('all')">View all →</button>
+      </div>
+      <div class="grid" id="recent-grid"></div>
+    </div>
+
+    <!-- All medicines -->
+    <div class="panel" id="panel-all">
+      <div class="page-head">
+        <div><h2>All medicines</h2><p id="all-count-label">Your complete cabinet</p></div>
+        <button class="btn-primary" onclick="showPanel('add')">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add medicine
+        </button>
+      </div>
+      <div class="grid" id="all-grid"></div>
+    </div>
+
+    <!-- Search -->
+    <div class="panel" id="panel-search">
+      <div class="page-head"><div><h2>Search</h2><p>Find by name, reason, or notes</p></div></div>
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        <input id="search-q" type="text" placeholder="Try 'fever' or 'paracetamol'…" oninput="doSearch()"/>
+      </div>
+      <div class="grid" id="search-grid"></div>
+      <div id="search-empty" style="display:none" class="empty-state">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        <h3>Nothing found</h3><p>Try a different keyword</p>
+      </div>
+      <div id="search-prompt" class="empty-state">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        <h3>What are you looking for?</h3><p>Search across all fields — name, reason, dosage, notes</p>
+      </div>
+    </div>
+
+    <!-- Add -->
+    <div class="panel" id="panel-add">
+      <div class="page-head"><div><h2>Add medicine</h2><p>Fill in the details below</p></div></div>
+      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:18px;padding:28px;max-width:640px">
+        <div class="form-grid">
+          <div class="fg"><label>Medicine name</label><input id="f-name" placeholder="e.g. Paracetamol"/></div>
+          <div class="fg"><label>Reason for taking</label><input id="f-reason" placeholder="e.g. Headache, fever"/></div>
+          <div class="fg"><label>Dosage</label><input id="f-dosage" placeholder="e.g. 500mg"/></div>
+          <div class="fg"><label>Duration (days)</label><input id="f-dur" placeholder="e.g. 5"/></div>
+          <div class="fg"><label>Frequency / day</label><input id="f-freq" placeholder="e.g. 3 times"/></div>
+          <div class="fg" style="justify-content:flex-end;padding-top:18px">
+            <div style="font-size:12px;color:var(--ink3);line-height:1.55">All fields help you find a medicine even if you forget its name later.</div>
+          </div>
+          <div class="fg full"><label>Notes &amp; precautions</label><textarea id="f-notes" placeholder="Side effects, food restrictions, doctor's advice…"></textarea></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-ghost" onclick="clearForm()">Clear</button>
+          <button class="btn-primary" onclick="saveMed()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Save medicine
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- Edit modal -->
+  <div class="overlay" id="edit-overlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Edit medicine</h3>
+        <button class="modal-close" onclick="closeOverlay('edit-overlay')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="form-grid">
+        <div class="fg"><label>Medicine name</label><input id="e-name"/></div>
+        <div class="fg"><label>Reason</label><input id="e-reason"/></div>
+        <div class="fg"><label>Dosage</label><input id="e-dosage"/></div>
+        <div class="fg"><label>Duration (days)</label><input id="e-dur"/></div>
+        <div class="fg"><label>Frequency / day</label><input id="e-freq"/></div>
+        <div class="fg full"><label>Notes</label><textarea id="e-notes"></textarea></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-ghost" onclick="closeOverlay('edit-overlay')">Cancel</button>
+        <button class="btn-primary" onclick="saveEdit()">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          Save changes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete modal -->
+  <div class="overlay" id="del-overlay">
+    <div class="modal" style="max-width:400px">
+      <div class="modal-head">
+        <h3>Delete medicine?</h3>
+        <button class="modal-close" onclick="closeOverlay('del-overlay')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="confirm-body"><p>This will permanently remove <strong id="del-name"></strong> from your cabinet. This cannot be undone.</p></div>
+      <div class="form-actions">
+        <button class="btn-ghost" onclick="closeOverlay('del-overlay')">Cancel</button>
+        <button class="btn-danger" onclick="confirmDel()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-wrap"><div class="toast" id="toast"></div></div>
+</div><!-- /shell -->
+
+<script src="script.js"></script>
+</body>
+</html>
