@@ -10,9 +10,9 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="shell">
 
-<div class="shell" id="app">
-  <!-- Sidebar -->
+  <!-- ── Sidebar ── -->
   <div class="sidebar">
     <div class="brand">
       <div class="brand-icon">
@@ -22,6 +22,7 @@
       <p>Personal pharmacy</p>
     </div>
     <nav class="nav">
+      <div class="nav-section">Main</div>
       <button class="nav-item active" onclick="showPanel('dashboard')">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         <span>Dashboard</span>
@@ -30,55 +31,51 @@
         <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
         <span>All medicines</span>
       </button>
-      <button class="nav-item" onclick="showPanel('search')">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
-        <span>Search</span>
-      </button>
       <button class="nav-item" onclick="showPanel('add')">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
         <span>Add medicine</span>
       </button>
+      <button class="nav-item" onclick="showPanel('search')">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        <span>Search</span>
+      </button>
+      <div class="nav-section">Tracking</div>
+      <button class="nav-item" onclick="showPanel('today')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="9 16 11 18 15 14"/></svg>
+        <span>Today's doses</span>
+      </button>
+      <button class="nav-item" onclick="showPanel('stats')">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Statistics</span>
+      </button>
     </nav>
     <div class="sidebar-footer">
-      <div class="count-pill"><strong id="total-count">0</strong>&nbsp;medicines stored</div>
+      <div class="count-pill"><strong id="total-count">0</strong> medicines stored</div>
     </div>
   </div>
 
-  <!-- Main -->
+  <!-- ── Main ── -->
   <div class="main">
 
     <!-- Dashboard -->
     <div class="panel active" id="panel-dashboard">
       <div class="page-head">
-        <div><h2>Good day</h2><p>Here's your medicine overview</p></div>
+        <div><h2 id="dash-greeting">Good day</h2><p>Here's your medicine overview</p></div>
         <button class="btn-primary" onclick="showPanel('add')">
           <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Add medicine
         </button>
       </div>
+      <div id="dash-alert"></div>
       <div class="stats-row">
-        <div class="stat">
-          <div class="stat-accent" style="background:var(--mint)"></div>
-          <div class="stat-label">Total medicines</div>
-          <div class="stat-val" id="ds-total">0</div>
-          <div class="stat-sub">in your cabinet</div>
-        </div>
-        <div class="stat">
-          <div class="stat-accent" style="background:var(--lavender)"></div>
-          <div class="stat-label">Unique reasons</div>
-          <div class="stat-val" id="ds-reasons">0</div>
-          <div class="stat-sub">conditions tracked</div>
-        </div>
-        <div class="stat">
-          <div class="stat-accent" style="background:var(--gold)"></div>
-          <div class="stat-label">With notes</div>
-          <div class="stat-val" id="ds-notes">0</div>
-          <div class="stat-sub">have extra info</div>
-        </div>
+        <div class="stat"><div class="stat-accent" style="background:var(--mint)"></div><div class="stat-label">Total medicines</div><div class="stat-val" id="ds-total">0</div><div class="stat-sub">in cabinet</div></div>
+        <div class="stat"><div class="stat-accent" style="background:var(--lavender)"></div><div class="stat-label">Unique reasons</div><div class="stat-val" id="ds-reasons">0</div><div class="stat-sub">conditions tracked</div></div>
+        <div class="stat"><div class="stat-accent" style="background:var(--gold)"></div><div class="stat-label">Today taken</div><div class="stat-val" id="ds-taken">0</div><div class="stat-sub" id="ds-taken-sub">of 0 doses</div></div>
+        <div class="stat"><div class="stat-accent" style="background:var(--rose)"></div><div class="stat-label">Missed today</div><div class="stat-val" id="ds-missed">0</div><div class="stat-sub">doses pending</div></div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <span style="font-size:13px;font-weight:500;color:var(--ink2)">Recent additions</span>
-        <button style="font-size:12.5px;color:var(--mint);background:none;border:none;cursor:pointer;font-family:'Outfit',sans-serif" onclick="showPanel('all')">View all →</button>
+        <button style="font-size:12px;color:var(--mint);background:none;border:none;cursor:pointer;font-family:'Outfit',sans-serif" onclick="showPanel('all')">View all →</button>
       </div>
       <div class="grid" id="recent-grid"></div>
     </div>
@@ -93,6 +90,45 @@
         </button>
       </div>
       <div class="grid" id="all-grid"></div>
+    </div>
+
+    <!-- Add -->
+    <div class="panel" id="panel-add">
+      <div class="page-head"><div><h2>Add medicine</h2><p>Fill in all details below</p></div></div>
+      <div class="form-card">
+        <div class="form-grid">
+          <div class="fg"><label>Medicine name</label><input id="f-name" placeholder="e.g. Paracetamol"/></div>
+          <div class="fg"><label>Reason for taking</label><input id="f-reason" placeholder="e.g. Fever, headache"/></div>
+          <div class="fg"><label>Dosage</label><input id="f-dosage" placeholder="e.g. 500mg"/></div>
+          <div class="fg"><label>Duration (days)</label><input id="f-dur" placeholder="e.g. 5"/></div>
+          <div class="fg"><label>Frequency</label><input id="f-freq" placeholder="e.g. 3 times a day"/></div>
+          <div class="fg" style="justify-content:flex-end;padding-top:16px">
+            <div style="font-size:11.5px;color:var(--ink3);line-height:1.6">Select reminder slots to track this medicine in Today's doses panel.</div>
+          </div>
+          <div class="fg full">
+            <label>Reminder slots</label>
+            <div class="slot-group" id="add-slot-group">
+              <label class="slot-label" id="sl-morning">
+                <input type="checkbox" class="slot-cb" value="Morning" onchange="toggleSlotLabel(this)"/> 🌅 Morning <span style="font-size:10.5px;opacity:.6">(8 AM)</span>
+              </label>
+              <label class="slot-label" id="sl-afternoon">
+                <input type="checkbox" class="slot-cb" value="Afternoon" onchange="toggleSlotLabel(this)"/> ☀️ Afternoon <span style="font-size:10.5px;opacity:.6">(1 PM)</span>
+              </label>
+              <label class="slot-label" id="sl-night">
+                <input type="checkbox" class="slot-cb" value="Night" onchange="toggleSlotLabel(this)"/> 🌙 Night <span style="font-size:10.5px;opacity:.6">(9 PM)</span>
+              </label>
+            </div>
+          </div>
+          <div class="fg full"><label>Notes &amp; precautions</label><textarea id="f-notes" placeholder="Side effects, food restrictions, doctor's advice…"></textarea></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-ghost" onclick="clearForm()">Clear</button>
+          <button class="btn-primary" onclick="saveMed()">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            Save medicine
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Search -->
@@ -113,29 +149,19 @@
       </div>
     </div>
 
-    <!-- Add -->
-    <div class="panel" id="panel-add">
-      <div class="page-head"><div><h2>Add medicine</h2><p>Fill in the details below</p></div></div>
-      <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:18px;padding:28px;max-width:640px">
-        <div class="form-grid">
-          <div class="fg"><label>Medicine name</label><input id="f-name" placeholder="e.g. Paracetamol"/></div>
-          <div class="fg"><label>Reason for taking</label><input id="f-reason" placeholder="e.g. Headache, fever"/></div>
-          <div class="fg"><label>Dosage</label><input id="f-dosage" placeholder="e.g. 500mg"/></div>
-          <div class="fg"><label>Duration (days)</label><input id="f-dur" placeholder="e.g. 5"/></div>
-          <div class="fg"><label>Frequency / day</label><input id="f-freq" placeholder="e.g. 3 times"/></div>
-          <div class="fg" style="justify-content:flex-end;padding-top:18px">
-            <div style="font-size:12px;color:var(--ink3);line-height:1.55">All fields help you find a medicine even if you forget its name later.</div>
-          </div>
-          <div class="fg full"><label>Notes &amp; precautions</label><textarea id="f-notes" placeholder="Side effects, food restrictions, doctor's advice…"></textarea></div>
-        </div>
-        <div class="form-actions">
-          <button class="btn-ghost" onclick="clearForm()">Clear</button>
-          <button class="btn-primary" onclick="saveMed()">
-            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-            Save medicine
-          </button>
-        </div>
+    <!-- TODAY -->
+    <div class="panel" id="panel-today">
+      <div class="page-head">
+        <div><h2>Today's doses</h2><p id="today-date-label"></p></div>
+        <button class="btn-ghost" onclick="renderToday()" style="font-size:12px">↻ Refresh</button>
       </div>
+      <div id="today-content"></div>
+    </div>
+
+    <!-- STATS -->
+    <div class="panel" id="panel-stats">
+      <div class="page-head"><div><h2>Statistics</h2><p>Your 14-day adherence history</p></div></div>
+      <div id="stats-content"></div>
     </div>
 
   </div><!-- /main -->
@@ -152,7 +178,21 @@
         <div class="fg"><label>Reason</label><input id="e-reason"/></div>
         <div class="fg"><label>Dosage</label><input id="e-dosage"/></div>
         <div class="fg"><label>Duration (days)</label><input id="e-dur"/></div>
-        <div class="fg"><label>Frequency / day</label><input id="e-freq"/></div>
+        <div class="fg"><label>Frequency</label><input id="e-freq"/></div>
+        <div class="fg full">
+          <label>Reminder slots</label>
+          <div class="slot-group">
+            <label class="slot-label" id="esl-morning">
+              <input type="checkbox" class="edit-slot-cb" value="Morning" onchange="toggleSlotLabel(this)"/> 🌅 Morning
+            </label>
+            <label class="slot-label" id="esl-afternoon">
+              <input type="checkbox" class="edit-slot-cb" value="Afternoon" onchange="toggleSlotLabel(this)"/> ☀️ Afternoon
+            </label>
+            <label class="slot-label" id="esl-night">
+              <input type="checkbox" class="edit-slot-cb" value="Night" onchange="toggleSlotLabel(this)"/> 🌙 Night
+            </label>
+          </div>
+        </div>
         <div class="fg full"><label>Notes</label><textarea id="e-notes"></textarea></div>
       </div>
       <div class="form-actions">
@@ -167,12 +207,12 @@
 
   <!-- Delete modal -->
   <div class="overlay" id="del-overlay">
-    <div class="modal" style="max-width:400px">
+    <div class="modal" style="max-width:420px">
       <div class="modal-head">
         <h3>Delete medicine?</h3>
         <button class="modal-close" onclick="closeOverlay('del-overlay')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
-      <div class="confirm-body"><p>This will permanently remove <strong id="del-name"></strong> from your cabinet. This cannot be undone.</p></div>
+      <p style="font-size:14px;color:var(--ink2);line-height:1.6;margin-bottom:20px">This will permanently remove <strong id="del-name"></strong> from your cabinet.</p>
       <div class="form-actions">
         <button class="btn-ghost" onclick="closeOverlay('del-overlay')">Cancel</button>
         <button class="btn-danger" onclick="confirmDel()">Delete</button>
