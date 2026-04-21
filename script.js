@@ -95,17 +95,34 @@ function doSearch() {
   sg.innerHTML = res.map(({ m, i }) => card(m, i)).join('');
 }
 
-function saveMed() {
-  const name = document.getElementById('f-name').value.trim();
+async function saveMed() {
+  const medName = document.getElementById('f-name').value.trim();
   const reason = document.getElementById('f-reason').value.trim();
   const dosage = document.getElementById('f-dosage').value.trim();
   const duration = document.getElementById('f-dur').value.trim();
   const frequency = document.getElementById('f-freq').value.trim();
   const notes = document.getElementById('f-notes').value.trim();
-  if (!name || !reason || !dosage || !duration || !frequency) { toast('Please fill in all required fields', 'err'); return; }
+
+  if (!medName || !reason || !dosage || !duration || !frequency) {
+    toast('Please fill in all required fields', 'err');
+    return;
+  }
+
+  // FIX: only show warning alert if there are actual warnings
+  const warnings = await checkWarning(medName);
+  const hasIssues = warnings.some(w => w.startsWith('⚠️'));
+  if (hasIssues) {
+    // FIX: give user a chance to cancel if warnings exist
+    const proceed = confirm(warnings.join('\n') + '\n\nDo you still want to save?');
+    if (!proceed) return;
+  }
+
   const d = load();
-  d.push({ name, reason, dosage, duration, frequency, notes });
-  save(d); clearForm(); toast('Medicine saved!'); showPanel('dashboard');
+  d.push({ name: medName, reason, dosage, duration, frequency, notes });
+  save(d);
+  clearForm();
+  toast('Medicine saved!');
+  showPanel('dashboard');
 }
 
 function clearForm() {
@@ -154,3 +171,54 @@ document.getElementById('edit-overlay').addEventListener('click', e => { if (e.t
 document.getElementById('del-overlay').addEventListener('click', e => { if (e.target.id === 'del-overlay') closeOverlay('del-overlay'); });
 
 renderDash();
+
+// FIX: removed duplicate getMedicineInfo — kept one clean version
+async function getMedicineInfo(medName) {
+  try {
+    const res = await fetch("http://127.0.0.1:5000/medicine-info", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ name: medName })
+    });
+    const data = await res.json();
+    alert(JSON.stringify(data, null, 2));
+  } catch (err) {
+    console.error(err);
+    alert("Could not fetch medicine info. Is the server running?");
+  }
+}
+
+async function checkWarning(medName) {
+  const meds = load().map(m => m.name);
+  try {
+    const res = await fetch("http://127.0.0.1:5000/check-warning", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        new_med: medName,
+        existing_meds: meds
+      })
+    });
+    const data = await res.json();
+    return data.warnings;
+  } catch (err) {
+    console.error(err);
+    // FIX: removed dead code after return — those lines never executed
+    return ["⚠️ Warning system not available"];
+  }
+}
+
+async function getSuggestion(problem) {
+  try {
+    const res = await fetch("http://127.0.0.1:5000/suggest", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ problem })
+    });
+    const data = await res.json();
+    alert(JSON.stringify(data, null, 2));
+  } catch (err) {
+    console.error(err);
+    alert("Could not fetch suggestion. Is the server running?");
+  }
+}
